@@ -10,7 +10,20 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {
+      // 后端代理 绕过referer及host begin 方法一
+      // '/api/getDiscList': {
+      //   target: 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg',
+      //   bypass: function(req, res, proxyOptions){
+      //     req.headers.referer = 'https://c.y.qq.com'
+      //     req.headers.host = 'c.y.qq.com'
+      //   },
+      //   pathRewrite: {
+      //     '^/api/getDiscList': ''
+      //   }
+      // }
+      // 后端代理 绕过referer及host end
+    },
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
