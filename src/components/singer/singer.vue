@@ -23,10 +23,10 @@ export default {
   },
   methods: {
     selectSinger(singer) {
-      console.log(singer)
       this.$router.push({
         path: `/singer/${singer.singer_id}`
       })
+      this.setSinger(singer)
     },
     _getSingerList() {
       getSingerList().then(res => {
@@ -56,7 +56,10 @@ export default {
         arr.push(obj)
       }
       return arr
-    }
+    },
+    ...mapMutations({
+      setSinger: 'SET_SINGER'
+    })
   },
   components: {
     ListView

@@ -67,9 +67,6 @@ export default {
     this.touch = {}
     this.listHeight = []
   },
-  mounted() {
-    window.addEventListener('scroll', this.scroll)
-  },
   methods: {
     selectItem(item) {
       this.$emit('select', item)
@@ -93,7 +90,6 @@ export default {
       this.$refs.listview.refresh()
     },
     scroll(pos) {
-      console.log(1)
       this.scrollY = pos.y
     },
     _calculateHeight() {
@@ -126,6 +122,14 @@ export default {
         this._calculateHeight()
       }, 20)
     },
+    // data: {
+    //   handler(newV, oldV) {
+    //     setTimeout(() => {
+    //       this._calculateHeight()
+    //     }, 20)
+    //   },
+    //   immediate: true
+    // },
     scrollY(newY) {
       const listHeight = this.listHeight
       // 当滚动到顶部，newY>0

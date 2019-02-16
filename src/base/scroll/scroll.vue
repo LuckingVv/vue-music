@@ -39,9 +39,9 @@ export default {
     }
   },
   mounted() {
-    setTimeout(() => {
+    // setTimeout(() => {
       this._initScroll()
-    }, 20)
+    // }, 20)
   },
   methods: {
     _initScroll() {
@@ -51,6 +51,10 @@ export default {
       this.scroll = new BScroll(this.$refs.wrapper, {
         probeType: this.probeType,
         click: this.click
+      })
+
+      this.scroll.on('scroll', pos => {
+        this.$emit('scroll', pos)
       })
     },
     enable() {
