@@ -41,7 +41,7 @@ export default {
       list.forEach(item => {
         let {musicData} = item
         getSongVkey(musicData.songmid).then(res => { // 获取song的vkey方法
-          const vkey = res.data.items[0].vkey
+          const vkey = res.req_0.data.midurlinfo[0].vkey
           if (musicData.songid && musicData.albummid) {
             ret.push(createSong(musicData, vkey))
           }
