@@ -30,14 +30,15 @@
             <span class="dot"></span>
           </div>
           <div class="progress-wrapper">
-            <span class="time time-l"></span>
+            <span class="time time-l">{{format(currentTime)}}</span>
             <div class="progress-bar-wrapper">
+              <progress-bar @percentChange="onProgressBarChange" :percent="percent"></progress-bar>
             </div>
-            <span class="time time-r"></span>
+            <span class="time time-r">{{format(currentSong.duration)}}</span>
           </div>
           <div class="operators">
             <div class="icon i-left">
-              <i></i>
+              <i :class="iconMode" @click="changeMode"></i>
             </div>
             <div class="icon i-left" :class="disabledCls">
               <i @click="prev" class="icon-prev"></i>
@@ -65,14 +66,15 @@
           <p class="desc" v-html="currentSong.singer"></p>
         </div>
         <div class="control">
-          <i @click.stop="togglePlaying" :class="miniIcon"></i>
+          <progress-circle :radius="radius" :percent="percent"></progress-circle>
+          <i @click.stop="togglePlaying" :class="miniIcon" class="icon-mini"></i>
         </div>
         <div class="control">
           <i class="icon-playlist"></i>
         </div>
       </div>
     </transition>
-    <audio ref="audio" :src="currentSong.url" @canplay="ready" @error="error"></audio>
+    <audio ref="audio" :src="currentSong.url" @canplay="ready" @error="error" @timeupdate="updateTime" @ended="end"></audio>
   </div>
 </template>
 
@@ -80,21 +82,31 @@
 import {mapGetters, mapMutations} from 'vuex'
 import animations from 'create-keyframe-animation'
 import {prefixStyle} from 'common/js/dom'
+import ProgressBar from 'base/progress-bar/progress-bar'
+import ProgressCircle from 'base/progress-circle/progress-circle'
+import {playMode} from 'common/js/config'
+import {shuffle} from 'common/js/util'
 
 const transform = prefixStyle('transform')
 
 export default {
   data() {
     return {
-      songReady: false
+      songReady: false,
+      currentTime: 0,
+      radius: 32,
+      isMove: false
     }
   },
   computed: {
     cdCls() {
-      return this.playing ? 'play' : 'pause'
+      return this.playing ? 'play' : 'play pause'
     },
     playIcon() {
       return this.playing ? 'icon-pause' : 'icon-play'
+    },
+    iconMode() {
+      return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
     },
     miniIcon() {
       return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
@@ -102,12 +114,17 @@ export default {
     disabledCls() {
       return this.songReady ? '' : 'disable'
     },
+    percent() {
+      return this.currentTime / this.currentSong.duration
+    },
     ...mapGetters([
       'playList',
       'fullScreen',
       'currentSong',
       'playing',
-      'currentIndex'
+      'currentIndex',
+      'mode',
+      'sequenceList'
     ])
   },
   methods: {
@@ -163,6 +180,17 @@ export default {
       }
       this.setPlayingState(!this.playing)
     },
+    end() {
+      if (this.mode === playMode.loop) {
+        this.loop()
+      } else {
+        this.next()
+      }
+    },
+    loop() {
+      this.$refs.audio.currentTime = 0
+      this.$refs.audio.play()
+    },
     next() {
       if (!this.songReady) {
         return
@@ -196,6 +224,54 @@ export default {
     },
     error() {
     },
+    updateTime(e) {
+      if (this.isMove) {
+        return
+      }
+      this.currentTime = e.target.currentTime
+    },
+    format(interval) {
+      interval = interval | 0
+      const minute = interval / 60 | 0
+      const second = this._pad(interval % 60)
+      return `${minute}:${second}`
+    },
+    onProgressBarChange(percent, isMove) {
+      this.isMove = isMove
+      this.currentTime = this.currentSong.duration * percent
+      if (!isMove) {
+        this.$refs.audio.currentTime = this.currentSong.duration * percent
+      }
+      if (!this.playing) {
+        this.setPlayingState(true)
+      }
+    },
+    changeMode() {
+      const mode = (this.mode + 1) % 3
+      this.setPlayMode(mode)
+      let list = null
+      if (mode === playMode.random) {
+        list = shuffle(this.sequenceList)
+      } else {
+        list = this.sequenceList
+      }
+      this.resetCurrentIndex(list)
+      this.setPlayList(list)
+    },
+    resetCurrentIndex(list) {
+      let index = list.findIndex((item) => {
+        return item.id === this.currentSong.id
+      })
+      this.setCurrentIndex(index)
+    },
+    _pad(num, n = 2) {
+      let len = num.toString().length
+      while (len < n) {
+        num = '0' + num
+        len++
+      }
+      return num
+    },
     _getPosAndScale() {
       const targetWidth = 40
       const paddingLeft = 40
@@ -214,21 +290,31 @@ export default {
     ...mapMutations({
       setFullScreen: 'SET_FULL_SCREEN',
       setPlayingState: 'SET_PLAYING_STATE',
-      setCurrentIndex: 'SET_CURRENT_INDEX'
+      setCurrentIndex: 'SET_CURRENT_INDEX',
+      setPlayMode: 'SET_PLAY_MODE',
+      setPlayList: 'SET_PLAYLIST'
     })
   },
   watch: {
-    currentSong() {
+    currentSong(newSong, oldSong) {
+      if (newSong.id === oldSong.id) {
+        return
+      }
       this.$nextTick(() => {
+        this.$refs.audio.pause()
         this.$refs.audio.play()
       })
     },
     playing(newPlaying) {
       const audio = this.$refs.audio
       this.$nextTick(() => {
-        newPlaying ? audio.play() : audio.stop()
+        newPlaying ? audio.play() : audio.pause()
       })
     }
+  },
+  components: {
+    ProgressBar,
+    ProgressCircle
   }
 }
 </script>
@@ -437,6 +523,8 @@ export default {
           border-radius: 50%
           &.play
             animation: rotate 10s linear infinite
+          &.running
+            animation-play-state: running
           &.pause
             animation-play-state: paused
       .text
@@ -456,6 +544,7 @@ export default {
           font-size: $font-size-small
           color: $color-text-d
       .control
+        position: relative
         flex: 0 0 30px
         width: 30px
         padding: 0 10px
@@ -465,7 +554,7 @@ export default {
         .icon-mini
           font-size: 32px
           position: absolute
-          left: 0
+          left: 10
           top: 0
 
   @keyframes rotate

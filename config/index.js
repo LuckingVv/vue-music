@@ -12,15 +12,16 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       // 后端代理 绕过referer及host begin 方法一
-      // '/api/getSingerList': {
+      // '/api/getSongKey': {
       //   target: 'https://u.y.qq.com/cgi-bin/musicu.fcg',
       //   changeOrigin: true,
       //   bypass: function(req, res, proxyOptions){
-      //     req.headers.referer = 'https://c.y.qq.com'
+      //     req.headers.referer = 'https://y.qq.com/portal/player.html'
       //     req.headers.host = 'c.y.qq.com'
+      //     req.headers.origin = 'https://y.qq.com'
       //   },
       //   pathRewrite: {
-      //     '^/api/getSingerList': ''
+      //     '^/api/getSongKey': ''
       //   }
       // }
       // 后端代理 绕过referer及host end
