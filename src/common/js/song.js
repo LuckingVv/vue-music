@@ -1,6 +1,6 @@
-// import {getLyric} from 'api/song'
-// import {ERR_OK} from 'api/config'
-// import {Base64} from 'js-base64'
+import {getLyric} from 'api/song'
+import {ERR_OK} from 'api/config'
+import {Base64} from 'js-base64'
 
 export default class Song {
   constructor({id, mid, singer, name, album, duration, image, url}) {
@@ -14,22 +14,22 @@ export default class Song {
     this.url = url
   }
 
-  // getLyric() {
-  //   if (this.lyric) {
-  //     return Promise.resolve(this.lyric)
-  //   }
+  getLyric() {
+    if (this.lyric) {
+      return Promise.resolve(this.lyric)
+    }
 
-  //   return new Promise((resolve, reject) => {
-  //     getLyric(this.mid).then((res) => {
-  //       if (res.retcode === ERR_OK) {
-  //         this.lyric = Base64.decode(res.lyric)
-  //         resolve(this.lyric)
-  //       } else {
-  //         reject('no lyric')
-  //       }
-  //     })
-  //   })
-  // }
+    return new Promise((resolve, reject) => {
+      getLyric(this.mid).then((res) => {
+        if (res.retcode === ERR_OK) {
+          this.lyric = Base64.decode(res.lyric)
+          resolve(this.lyric)
+        } else {
+          reject(new Error('no lyric'))
+        }
+      })
+    })
+  }
 }
 
 export function createSong(musicData, vkey) {
@@ -41,7 +41,7 @@ export function createSong(musicData, vkey) {
     album: musicData.albumname,
     duration: musicData.interval,
     image: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${musicData.albummid}.jpg?max_age=2592000`,
-    url: `http://101.227.216.143/amobile.music.tc.qq.com/${vkey}&uin=0&fromtag=66`
+    url: `http://222.73.132.153/amobile.music.tc.qq.com/${vkey}&uin=0&fromtag=66`
   })
 }
 

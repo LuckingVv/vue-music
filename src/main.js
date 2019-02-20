@@ -12,7 +12,7 @@ import 'common/stylus/index.styl'
 fastclick.attach(document.body)
 
 Vue.use(VueLazyLoad, {
-  loading: require('common/image/default.gif')
+  loading: require('common/image/default.png')
 })
 /* eslint-disable no-new */
 new Vue({
