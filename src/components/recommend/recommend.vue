@@ -64,7 +64,7 @@ export default {
     },
     selectItem(item) {
       this.$router.push({
-        path: `/recommend/${item.dessid}`
+        path: `/recommend/${item.dissid}`
       })
       this.setDisc(item)
     },

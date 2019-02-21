@@ -35,6 +35,18 @@ module.exports = {
         pathRewrite: {
           '^/api/discSongList': ''
         }
+      },
+      '/api/searchList': {
+        target: 'https://c.y.qq.com/soso/fcgi-bin/search_for_qq_cp',
+        changeOrigin: true,
+        bypass: function(req, res, proxyOptions){
+          req.headers.referer = 'https://c.y.qq.com/'
+          req.headers.host = 'c.y.qq.com'
+          req.headers.origin = 'https://y.qq.com'
+        },
+        pathRewrite: {
+          '^/api/searchList': ''
+        }
       }
       // 后端代理 绕过referer及host end
     },

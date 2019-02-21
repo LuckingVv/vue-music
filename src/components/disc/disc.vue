@@ -8,7 +8,7 @@
 import MusicList from 'components/music-list/music-list'
 import {mapGetters} from 'vuex'
 import {getDiscSongList} from 'api/recommend'
-import {ERR_OK} from 'api/config'
+import {ERR_OK, getSongVkey} from 'api/config'
 import {createSong} from 'common/js/song'
 
 export default {
@@ -45,10 +45,12 @@ export default {
     _normalizeSongs(list) {
       let ret = []
       list.forEach(musicData => {
-        const vkey = musicData.index % 2 === 1 ? 'C400002u0fTY2HoJJp.m4a?guid=1058760837&vkey=5E2D48351FD01F2EECE83E25539E39CD7678E7AC6217AEC5585B3CDCE9CBEA5D0F45EC3AF177898B90E6A87AF6C3F177E7A3EB6CB822A42D' : 'C400000LZuSb16dIgb.m4a?guid=1058760837&vkey=3747BC714E018BAC91C24024D4D5B72BF01129DD301E0B31DFB3F203E86CC8BCDBB2C918B9172DF05B7F6364D7FC18861A1D3FDEAD3EBE20'
-        if (musicData.songid && musicData.albummid) {
+        getSongVkey(musicData.songmid).then(res => { // 获取song的vkey方法
+          const vkey = res.req_0.data.midurlinfo[0].purl
+          if (musicData.songid && musicData.albummid) {
             ret.push(createSong(musicData, vkey))
           }
+        })
       })
       return ret
     }

@@ -19,8 +19,8 @@ export function getRankSongList(topid) {
 
   const data = Object.assign({}, commonParams, {
     tpl: 3,
-    page: 'detai',
-    date: '2019-02-20',
+    page: 'detail',
+    date: '2019-02-21',
     topid: topid,
     type: 'top',
     song_begin: 0,

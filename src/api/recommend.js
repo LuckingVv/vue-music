@@ -39,6 +39,7 @@ export function getDiscList() {
     return Promise.resolve(res.data)
   })
 }
+
 export function getDiscSongList(disstid) {
   const url = '/api/discSongList'
 
