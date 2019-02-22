@@ -32,6 +32,7 @@ import Loading from 'base/loading/loading'
 import {prefixStyle} from 'common/js/dom'
 import {mapActions} from 'vuex'
 import {playListMixin} from 'common/js/mixin'
+import {ERR_OK, getSongVkey} from 'api/config'
 
 const RESERVED_HEIGHT = 40
 const transform = prefixStyle('transform')
@@ -90,9 +91,15 @@ export default {
       this.$router.back()
     },
     selectItem(item, index) {
-      this.selectPlay({
-        list: this.songs,
-        index
+      getSongVkey(item.mid).then(res => { // 获取song的vkey方法
+        if (res.code === ERR_OK) {
+          const vkey = res.req_0.data.midurlinfo[0].purl
+          this.songs.filter(song => song.mid === item.mid)[0].url += vkey
+        }
+        this.selectPlay({
+          list: this.songs,
+          index
+        })
       })
     },
     random() {

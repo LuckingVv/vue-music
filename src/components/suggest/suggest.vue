@@ -83,19 +83,16 @@
           ret.push({...data.zhida, ...{type: TYPE_SINGER}})
         }
         if (data.song) {
-          ret = ret.concat(this._normalizeSong(data.song.list))
+          ret = ret.concat(this._normalizeSongs(data.song.list))
         }
         return ret
       },
-      _normalizeSong(list) {
+      _normalizeSongs(list) {
         let ret = []
         list.forEach((musicData, index) => {
-           getSongVkey(musicData.songmid).then(res => { // 获取song的vkey方法
-            const vkey = res.req_0.data.midurlinfo[0].purl
-            if (musicData.songid && musicData.albummid) {
-              ret.push(createSong(musicData, vkey))
-            }
-          })
+          if (musicData.songid && musicData.albummid) {
+            ret.push(createSong(musicData))
+          }
         })
         return ret
       },
@@ -118,7 +115,13 @@
           })
           this.setSinger(singer)
         } else {
-          this.insertSong(item)
+          getSongVkey(item.mid).then(res => { // 获取song的vkey方法
+            if (res.code === ERR_OK) {
+              const vkey = res.req_0.data.midurlinfo[0].purl
+              item.url += vkey
+            }
+            this.insertSong(item)
+          })
         }
       },
       _checkMore(data) {

@@ -8,7 +8,7 @@
 import MusicList from 'components/music-list/music-list'
 import {mapGetters} from 'vuex'
 import {getRankSongList} from 'api/rank'
-import {ERR_OK, getSongVkey} from 'api/config'
+import {ERR_OK} from 'api/config'
 import {createSong} from 'common/js/song'
 
 export default {
@@ -50,12 +50,9 @@ export default {
       let ret = []
       list.forEach(({data}) => {
         const musicData = data
-        getSongVkey(musicData.songmid).then(res => { // 获取song的vkey方法
-          const vkey = res.req_0.data.midurlinfo[0].purl
-          if (musicData.songid && musicData.albummid) {
-            ret.push(createSong(musicData, vkey))
-          }
-        })
+        if (musicData.songid && musicData.albummid) {
+          ret.push(createSong(musicData))
+        }
       })
       return ret
     }
