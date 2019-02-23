@@ -78,11 +78,12 @@
           <progress-circle :radius="radius" :percent="percent"></progress-circle>
           <i @click.stop="togglePlaying" :class="miniIcon" class="icon-mini"></i>
         </div>
-        <div class="control">
+        <div class="control" @click.stop="showPlaylist">
           <i class="icon-playlist"></i>
         </div>
       </div>
     </transition>
+    <playlist ref="playlist"></playlist>
     <audio ref="audio" :src="currentSong.url" @canplay="ready" @error="error" @timeupdate="updateTime" @ended="end"></audio>
   </div>
 </template>
@@ -97,6 +98,7 @@ import {playMode} from 'common/js/config'
 import {shuffle} from 'common/js/util'
 import Lyric from 'lyric-parser'
 import Scroll from 'base/scroll/scroll'
+import Playlist from 'components/playlist/playlist'
 
 const transform = prefixStyle('transform')
 const transitionDuration = prefixStyle('transitionDuration')
@@ -299,7 +301,7 @@ export default {
       })
       this.setCurrentIndex(index)
     },
-    getLyric() {
+    _getLyric() {
       this.currentSong.getLyric().then(lyric => {
         this.currentLyric = new Lyric(lyric, this.handleLyric)
         if (this.playing) {
@@ -320,6 +322,9 @@ export default {
         this.$refs.lyricList.scrollTo(0, 0, 1000)
       }
       this.playingLyric = txt
+    },
+    showPlaylist() {
+      this.$refs.playlist.show()
     },
     middleTouchStart(e) {
       this.touch.initiated = true
@@ -414,7 +419,7 @@ export default {
       }
       setTimeout(() => {
         this.$refs.audio.play()
-        this.getLyric()
+        this._getLyric()
       }, 1000)
     },
     playing(newPlaying) {
@@ -427,7 +432,8 @@ export default {
   components: {
     ProgressBar,
     ProgressCircle,
-    Scroll
+    Scroll,
+    Playlist
   }
 }
 </script>

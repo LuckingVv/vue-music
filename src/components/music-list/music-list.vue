@@ -30,7 +30,7 @@ import Scroll from 'base/scroll/scroll'
 import SongList from 'base/song-list/song-list'
 import Loading from 'base/loading/loading'
 import {prefixStyle} from 'common/js/dom'
-import {mapActions} from 'vuex'
+import {mapMutations, mapActions} from 'vuex'
 import {playListMixin} from 'common/js/mixin'
 import {ERR_OK, getSongVkey} from 'api/config'
 
@@ -93,13 +93,18 @@ export default {
     selectItem(item, index) {
       getSongVkey(item.mid).then(res => { // 获取song的vkey方法
         if (res.code === ERR_OK) {
-          const vkey = res.req_0.data.midurlinfo[0].purl
-          this.songs.filter(song => song.mid === item.mid)[0].url += vkey
+          const vkey = res.req_0.data.midurlinfo[0].vkey
+          const filename = res.req_0.data.midurlinfo[0].filename
+          const url = `http://dl.stream.qqmusic.qq.com/${filename}?guid=1058760837&vkey=${vkey}&uin=0&fromtag=66`
+          this.selectPlay({
+            list: this.songs,
+            index
+          })
+          this.setPlaylistUrl({
+            url,
+            index
+          })
         }
-        this.selectPlay({
-          list: this.songs,
-          index
-        })
       })
     },
     random() {
@@ -107,6 +112,9 @@ export default {
         list: this.songs
       })
     },
+    ...mapMutations({
+        setPlaylistUrl: 'SET_PLAYLIST_URL'
+    }),
     ...mapActions([
       'selectPlay',
       'randomPlay'

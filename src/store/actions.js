@@ -88,3 +88,6 @@ export const deleteSearchHistory = function ({commit}, query) {
 export const clearSearchHistory = function ({commit}) {
   commit(types.SET_SEARCH_HISTORY, clearSearch())
 }
+
+// export const setPlayListSong = function ({commit, state}, {url, index}) {
+// }

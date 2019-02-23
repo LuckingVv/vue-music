@@ -22,6 +22,9 @@ const mutations = {
   [types.SET_CURRENT_INDEX](state, index) {
     state.currentIndex = index
   },
+  [types.SET_PLAYLIST_URL](state, {url, index}) {
+    state.playList[index].url = url
+  },
   [types.SET_DISC](state, disc) {
     state.disc = disc
   },
