@@ -1,5 +1,10 @@
 import * as types from './mutation-types'
 
+function findIndex (list, song) {
+  return list.findIndex((item) => {
+    return item.id === song.id
+  })
+}
 const mutations = {
   [types.SET_SINGER](state, payload) {
     state.singer = payload
@@ -23,6 +28,8 @@ const mutations = {
     state.currentIndex = index
   },
   [types.SET_PLAYLIST_URL](state, {url, index}) {
+    let sIndex = findIndex(state.sequenceList, state.playList[state.currentIndex])
+    state.sequenceList[sIndex].url = url
     state.playList[index].url = url
   },
   [types.SET_DISC](state, disc) {

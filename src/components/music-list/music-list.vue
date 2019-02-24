@@ -30,9 +30,9 @@ import Scroll from 'base/scroll/scroll'
 import SongList from 'base/song-list/song-list'
 import Loading from 'base/loading/loading'
 import {prefixStyle} from 'common/js/dom'
-import {mapMutations, mapActions} from 'vuex'
+import {mapGetters, mapMutations, mapActions} from 'vuex'
 import {playListMixin} from 'common/js/mixin'
-import {ERR_OK, getSongVkey} from 'api/config'
+import {getSongUrl} from 'common/js/song'
 
 const RESERVED_HEIGHT = 40
 const transform = prefixStyle('transform')
@@ -66,7 +66,12 @@ export default {
   computed: {
     bgStyle() {
       return `background-image:url(${this.bgImage})`
-    }
+    },
+    ...mapGetters([
+      'currentSong',
+      'currentIndex',
+      'mode'
+    ])
   },
   created() {
     this.probeType = 3
@@ -91,26 +96,17 @@ export default {
       this.$router.back()
     },
     selectItem(item, index) {
-      getSongVkey(item.mid).then(res => { // 获取song的vkey方法
-        if (res.code === ERR_OK) {
-          const vkey = res.req_0.data.midurlinfo[0].vkey
-          const filename = res.req_0.data.midurlinfo[0].filename
-          const url = `http://dl.stream.qqmusic.qq.com/${filename}?guid=1058760837&vkey=${vkey}&uin=0&fromtag=66`
-          this.selectPlay({
-            list: this.songs,
-            index
-          })
-          this.setPlaylistUrl({
-            url,
-            index
-          })
-        }
+      getSongUrl(item, index, this.setPlaylistUrl)
+      this.selectPlay({
+        list: this.songs,
+        index
       })
     },
     random() {
       this.randomPlay({
         list: this.songs
       })
+      getSongUrl(this.currentSong, this.currentIndex, this.setPlaylistUrl)
     },
     ...mapMutations({
         setPlaylistUrl: 'SET_PLAYLIST_URL'

@@ -99,6 +99,7 @@ import {shuffle} from 'common/js/util'
 import Lyric from 'lyric-parser'
 import Scroll from 'base/scroll/scroll'
 import Playlist from 'components/playlist/playlist'
+import {getSongUrl} from 'common/js/song'
 
 const transform = prefixStyle('transform')
 const transitionDuration = prefixStyle('transitionDuration')
@@ -230,6 +231,7 @@ export default {
           index = 0
         }
         this.setCurrentIndex(index)
+        getSongUrl(this.playList[index], index, this.setPlaylistUrl)
         if (!this.playing) {
           this.togglePlaying()
         }
@@ -246,6 +248,7 @@ export default {
           index = this.playList.length
         }
         this.setCurrentIndex(index)
+        getSongUrl(this.playList[index], index, this.setPlaylistUrl)
         if (!this.playing) {
           this.togglePlaying()
         }
@@ -406,7 +409,8 @@ export default {
       setPlayingState: 'SET_PLAYING_STATE',
       setCurrentIndex: 'SET_CURRENT_INDEX',
       setPlayMode: 'SET_PLAY_MODE',
-      setPlayList: 'SET_PLAYLIST'
+      setPlayList: 'SET_PLAYLIST',
+      setPlaylistUrl: 'SET_PLAYLIST_URL'
     })
   },
   watch: {

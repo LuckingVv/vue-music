@@ -11,13 +11,13 @@
         </div>
         <scroll ref="listContent" class="list-content">
           <transition-group ref="list" name="list" tag="ul">
-            <li class="item" v-for="(item, index) in sequenceList" :key="item.id" @click="selectItem(item, index)">
+            <li ref="listItem" class="item" v-for="(item, index) in sequenceList" :key="item.id" @click="selectItem(item, index)">
               <i class="current" :class="getCurrentIcon(item)"></i>
               <span class="text">{{item.name}}</span>
               <span class="like">
                 <i class="icon-not-favorite"></i>
               </span>
-              <span class="delete">
+              <span class="delete" @click.stop="deleteOne(item, index)">
                 <i class="icon-delete"></i>
               </span>
             </li>
@@ -41,9 +41,9 @@
 
 <script type="text/ecmascript-6">
   import Scroll from 'base/scroll/scroll'
-  import {mapGetters, mapMutations} from 'vuex'
+  import {mapGetters, mapMutations, mapActions} from 'vuex'
   import {playMode} from 'common/js/config'
-  import {ERR_OK, getSongVkey} from 'api/config'
+  import {getSongUrl} from 'common/js/song'
 
   export default {
     data() {
@@ -57,7 +57,8 @@
         'sequenceList',
         'currentSong',
         'mode',
-        'playList'
+        'playList',
+        'currentIndex'
       ])
     },
     methods: {
@@ -65,6 +66,7 @@
         this.showFlag = true
         setTimeout(() => {
           this.$refs.listContent.refresh()
+          this.scrollToCurrent(this.currentSong)
         }, 20)
       },
       hide() {
@@ -77,32 +79,57 @@
         return ''
       },
       selectItem(item, index) {
-        getSongVkey(item.mid).then(res => { // 获取song的vkey方法
-          if (res.code === ERR_OK) {
-             const vkey = res.req_0.data.midurlinfo[0].vkey
-          const filename = res.req_0.data.midurlinfo[0].filename
-          const url = `http://dl.stream.qqmusic.qq.com/${filename}?guid=1058760837&vkey=${vkey}&uin=0&fromtag=66`
-            this.setPlaylistUrl({
-              url,
-              index
-            })
-          }
-          if (this.mode === playMode.random) {
-            index = this.playList.findIndex((song) => {
-              return song.id === item.id
-            })
-          }
-          this.setCurrentIndex(index)
-          this.setPlayingState(true)
+        getSongUrl(item, index, this.setPlaylistUrl)
+        if (this.mode === playMode.random) {
+          index = this.playList.findIndex((song) => {
+            return song.id === item.id
+          })
+        }
+        this.setCurrentIndex(index)
+        this.setPlayingState(true)
+      },
+      scrollToCurrent(current) {
+        const index = this.sequenceList.findIndex((song) => {
+          return current.id === song.id
+        })
+        this.$refs.listContent.scrollToElement(this.$refs.listItem[index], 300)
+      },
+      deleteOne(item, index) {
+        this.deleteSong(item)
+        const song = this.playList[index]
+        const nextIndex = index + 1
+        const sIndex = this.findIndex(this.sequenceList, this.playList[this.currentIndex])
+        const nextSIndex = sIndex + 1
+        console.log(index)
+        console.log(this.currentIndex)
+        console.log(this.playList[this.currentIndex])
+        if (index === this.currentIndex) {
+          getSongUrl(song, nextIndex, this.setPlaylistUrl)
+        } else if (index === sIndex) {
+          getSongUrl(song, nextSIndex, this.setPlaylistUrl)
+        }
+      },
+      findIndex (list, song) {
+        return list.findIndex((item) => {
+          return item.id === song.id
         })
       },
       ...mapMutations({
         setCurrentIndex: 'SET_CURRENT_INDEX',
         setPlayingState: 'SET_PLAYING_STATE',
         setPlaylistUrl: 'SET_PLAYLIST_URL'
-      })
+      }),
+      ...mapActions([
+        'deleteSong'
+      ])
     },
     watch: {
+      currentSong(newSong, oldSong) {
+        if (!this.showFlag || newSong.id === oldSong.id) {
+          return
+        }
+        this.scrollToCurrent(newSong)
+      }
     },
     components: {
       Scroll

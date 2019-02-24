@@ -1,5 +1,5 @@
 import {getLyric} from 'api/song'
-import {ERR_OK} from 'api/config'
+import {ERR_OK, getSongVkey} from 'api/config'
 import {Base64} from 'js-base64'
 
 export default class Song {
@@ -54,4 +54,18 @@ function filterSinger(singer) {
     ret.push(s.name)
   })
   return ret.join('/')
+}
+
+export function getSongUrl(item, index, fn) {
+  getSongVkey(item.mid).then(res => { // 获取song的vkey方法
+    if (res.code === ERR_OK) {
+      const vkey = res.req_0.data.midurlinfo[0].vkey
+      const filename = res.req_0.data.midurlinfo[0].filename
+      const url = `http://dl.stream.qqmusic.qq.com/${filename}?guid=1058760837&vkey=${vkey}&uin=0&fromtag=66`
+      fn({
+        url,
+        index
+      })
+    }
+  })
 }
