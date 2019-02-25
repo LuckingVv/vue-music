@@ -33,9 +33,10 @@ export const playerMixin = {
     },
     ...mapGetters([
       'sequenceList',
-      'playlist',
+      'playList',
       'currentSong',
       'mode',
+      'currentIndex',
       'favoriteList'
     ])
   },
@@ -81,7 +82,8 @@ export const playerMixin = {
       setPlayMode: 'SET_PLAY_MODE',
       setPlaylist: 'SET_PLAYLIST',
       setCurrentIndex: 'SET_CURRENT_INDEX',
-      setPlayingState: 'SET_PLAYING_STATE'
+      setPlayingState: 'SET_PLAYING_STATE',
+      setPlaylistUrl: 'SET_PLAYLIST_URL'
     }),
     ...mapActions([
       'saveFavoriteList',

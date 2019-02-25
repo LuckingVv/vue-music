@@ -15,7 +15,7 @@ export function getHotKey() {
   return jsonp(url, data, options)
 }
 
-export function getSearch(w, p, perpage) {
+export function getSearch(w, p, zhida, perpage) {
   const url = '/api/searchList'
 
   const data = Object.assign({}, commonParams, {
@@ -24,7 +24,7 @@ export function getSearch(w, p, perpage) {
     platform: 'h5',
     w,
     zhidaqu: 1,
-    catZhida: 1,
+    catZhida: zhida ? 1 : 0,
     p,
     uin: 0,
     t: 0,

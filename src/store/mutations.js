@@ -30,7 +30,9 @@ const mutations = {
   [types.SET_PLAYLIST_URL](state, {url, index}) {
     let sIndex = findIndex(state.sequenceList, state.playList[state.currentIndex])
     state.sequenceList[sIndex].url = url
-    state.playList[index].url = url
+    if (state.playList[index]) {
+      state.playList[index].url = url
+    }
   },
   [types.SET_DISC](state, disc) {
     state.disc = disc
@@ -40,6 +42,12 @@ const mutations = {
   },
   [types.SET_SEARCH_HISTORY](state, history) {
     state.searchHistory = history
+  },
+  [types.SET_FAVORITE_LIST](state, favorite) {
+    state.favoriteList = favorite
+  },
+  [types.SET_PLAY_HISTORY](state, history) {
+    state.playHistory = history
   }
 }
 export default mutations

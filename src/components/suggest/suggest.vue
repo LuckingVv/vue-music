@@ -14,14 +14,13 @@
     <div v-show="!hasMore && !result.length" class="no-result-wrapper">
       <no-result title="抱歉，暂无搜索结果"></no-result>
     </div>
-    <router-view></router-view>
   </scroll>
 </template>
 
 <script type="text/ecmascript-6">
   import {getSearch} from 'api/search'
-  import {ERR_OK, getSongVkey} from 'api/config'
-  import {createSong} from 'common/js/song'
+  import {ERR_OK} from 'api/config'
+  import {createSong, getSongUrl} from 'common/js/song'
   import Loading from 'base/loading/loading'
   import Scroll from 'base/scroll/scroll'
   import Singer from 'common/js/singer'
@@ -56,7 +55,7 @@
         this.page = 1
         this.hasMore = true
         this.$refs.suggest.scrollTo(0, 0)
-        getSearch(this.query, this.page, perpage).then((res) => {
+        getSearch(this.query, this.page, this.showSinger, perpage).then((res) => {
           if (res.code === ERR_OK) {
             this.result = this._genResult(res.data)
             this._checkMore(res.data)
@@ -70,7 +69,7 @@
           return
         }
         this.page++
-        getSearch(this.query, this.page, perpage).then((res) => {
+        getSearch(this.query, this.page, this.showSinger, perpage).then((res) => {
           if (res.code === ERR_OK) {
             this.result = this.result.concat(this._genResult(res.data))
             this._checkMore(res)
@@ -105,7 +104,7 @@
           return `${item.name}-${item.singer}`
         }
       },
-      selectItem(item) {
+      selectItem(item, index) {
         if (item.type === TYPE_SINGER) {
           item.singer_id = item.singerid
           item.singer_mid = item.singermid
@@ -117,13 +116,9 @@
           })
           this.setSinger(singer)
         } else {
-          getSongVkey(item.mid).then(res => { // 获取song的vkey方法
-            if (res.code === ERR_OK) {
-              const vkey = res.req_0.data.midurlinfo[0].purl
-              item.url += vkey
-            }
-            this.insertSong(item)
-          })
+          const index = this.current
+          getSongUrl(item, index, this.setPlaylistUrl)
+          this.insertSong(item)
         }
         this.$emit('select')
       },
@@ -147,7 +142,8 @@
         this.$refs.suggest.refresh()
       },
        ...mapMutations({
-        setSinger: 'SET_SINGER'
+        setSinger: 'SET_SINGER',
+        setPlaylistUrl: 'SET_PLAYLIST_URL'
       }),
       ...mapActions([
         'insertSong'
