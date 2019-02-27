@@ -12,8 +12,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       // 后端代理 绕过referer及host begin 方法一
-      '/api/lyric': {
-        target: 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg',
+      '/api': {
+        target: 'https://c.y.qq.com/',// splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg
         changeOrigin: true,
         bypass: function(req, res, proxyOptions){
           req.headers.referer = 'https://c.y.qq.com/'
@@ -21,32 +21,44 @@ module.exports = {
           req.headers.origin = 'https://y.qq.com'
         },
         pathRewrite: {
-          '^/api/lyric': ''
+          '^/api': ''
         }
-      },
-      '/api/discSongList': {
-        target: 'https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg',
-        changeOrigin: true,
-        bypass: function(req, res, proxyOptions){
-          req.headers.referer = 'https://c.y.qq.com/'
-          req.headers.host = 'c.y.qq.com'
-          req.headers.origin = 'https://y.qq.com'
-        },
-        pathRewrite: {
-          '^/api/discSongList': ''
-        }
-      },
-      '/api/searchList': {
-        target: 'https://c.y.qq.com/soso/fcgi-bin/search_for_qq_cp',
-        changeOrigin: true,
-        bypass: function(req, res, proxyOptions){
-          req.headers.referer = 'https://c.y.qq.com/'
-          req.headers.host = 'c.y.qq.com'
-          req.headers.origin = 'https://y.qq.com'
-        },
-        pathRewrite: {
-          '^/api/searchList': ''
-        }
+      // },
+      // '/api/lyric': {
+      //   target: 'https://c.y.qq.com/',
+      //   changeOrigin: true,
+      //   bypass: function(req, res, proxyOptions){
+      //     req.headers.referer = 'https://c.y.qq.com/'
+      //     req.headers.host = 'c.y.qq.com'
+      //     req.headers.origin = 'https://y.qq.com'
+      //   },
+      //   pathRewrite: {
+      //     '^/api/lyric': 'lyric/fcgi-bin/fcg_query_lyric_new.fcg'
+      //   }
+      // },
+      // '/api/discSongList': {
+      //   target: 'https://c.y.qq.com/',
+      //   changeOrigin: true,
+      //   bypass: function(req, res, proxyOptions){
+      //     req.headers.referer = 'https://c.y.qq.com/'
+      //     req.headers.host = 'c.y.qq.com'
+      //     req.headers.origin = 'https://y.qq.com'
+      //   },
+      //   pathRewrite: {
+      //     '^/api/discSongList': 'qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg'
+      //   }
+      // },
+      // '/api/searchList': {
+      //   target: 'https://c.y.qq.com/',
+      //   changeOrigin: true,
+      //   bypass: function(req, res, proxyOptions){
+      //     req.headers.referer = 'https://c.y.qq.com/'
+      //     req.headers.host = 'c.y.qq.com'
+      //     req.headers.origin = 'https://y.qq.com'
+      //   },
+      //   pathRewrite: {
+      //     '^/api/searchList': 'soso/fcgi-bin/search_for_qq_cp'
+      //   }
       }
       // 后端代理 绕过referer及host end
     },
@@ -83,14 +95,29 @@ module.exports = {
   },
 
   build: {
+    port: 8082,
     // Template for index.html
     index: path.resolve(__dirname, '../dist/index.html'),
 
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
-
+    assetsPublicPath: './',
+    proxyTable: {
+      // 后端代理 绕过referer及host begin 方法一
+      '/api': {
+        target: 'https://c.y.qq.com/',// splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg
+        changeOrigin: true,
+        bypass: function(req, res, proxyOptions){
+          req.headers.referer = 'https://c.y.qq.com/'
+          req.headers.host = 'c.y.qq.com'
+          req.headers.origin = 'https://y.qq.com'
+        },
+        pathRewrite: {
+          '^/api': ''
+        }
+      }
+    },
     /**
      * Source Maps
      */

@@ -17,7 +17,7 @@ export function getRecommend() {
 }
 
 export function getDiscList() {
-  const url = '/api/getDiscList'
+  const url = '/api/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
 
   const data = Object.assign({}, commonParams, {
     picmid: 1,
@@ -41,7 +41,7 @@ export function getDiscList() {
 }
 
 export function getDiscSongList(disstid) {
-  const url = '/api/discSongList'
+  const url = '/api/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg'
 
   const data = Object.assign({}, commonParams, {
     type: 1,

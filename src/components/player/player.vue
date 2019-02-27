@@ -226,7 +226,14 @@ export default {
           index = 0
         }
         this.setCurrentIndex(index)
-        getSongUrl(this.playList[index], index, this.setPlaylistUrl)
+        getSongUrl(this.playList[index]).then(url => {
+          this.setPlaylistUrl({
+            url,
+            index
+          })
+        }).catch((err) => {
+          console.log(err)
+        })
         if (!this.playing) {
           this.togglePlaying()
         }
@@ -246,7 +253,14 @@ export default {
           index = this.playList.length - 1
         }
         this.setCurrentIndex(index)
-        getSongUrl(this.playList[index], index, this.setPlaylistUrl)
+        getSongUrl(this.playList[index]).then(url => {
+          this.setPlaylistUrl({
+            url,
+            index
+          })
+        }).catch((err) => {
+          console.log(err)
+        })
         if (!this.playing) {
           this.togglePlaying()
         }

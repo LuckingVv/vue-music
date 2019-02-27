@@ -38,7 +38,6 @@
   import Song, {getSongUrl} from 'common/js/song'
   import {mapGetters, mapMutations, mapActions} from 'vuex'
   import {playListMixin} from 'common/js/mixin'
-  // import {getSongUrl} from 'common/js/song'
 
   export default {
     mixins: [playListMixin],
@@ -86,8 +85,15 @@
         this.currentIndex = index
       },
       selectSong(song, index) {
-        getSongUrl(song, index, this.setPlaylistUrl)
-        this.insertSong(new Song(song))
+        getSongUrl(song).then(url => {
+          this.insertSong(new Song(song))
+          this.setPlaylistUrl({
+            url,
+            index
+          })
+        }).catch((err) => {
+          console.log(err)
+        })
       },
       back() {
         this.$router.back()

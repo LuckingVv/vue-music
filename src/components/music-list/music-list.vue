@@ -96,17 +96,31 @@ export default {
       this.$router.back()
     },
     selectItem(item, index) {
-      getSongUrl(item, index, this.setPlaylistUrl)
-      this.selectPlay({
-        list: this.songs,
-        index
+      getSongUrl(item).then(url => {
+        this.selectPlay({
+          list: this.songs,
+          index
+        })
+        this.setPlaylistUrl({
+          url,
+          index
+        })
+      }).catch((err) => {
+        console.log(err)
       })
     },
     random() {
       this.randomPlay({
         list: this.songs
       })
-      getSongUrl(this.currentSong, this.currentIndex, this.setPlaylistUrl)
+      getSongUrl(this.currentSong).then(url => {
+        this.setPlaylistUrl({
+          url,
+          index: this.currentIndex
+        })
+      }).catch((err) => {
+        console.log(err)
+      })
     },
     ...mapMutations({
         setPlaylistUrl: 'SET_PLAYLIST_URL'

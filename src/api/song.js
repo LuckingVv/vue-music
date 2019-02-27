@@ -2,7 +2,7 @@ import {commonParams} from './config'
 import axios from 'axios'
 
 export function getLyric(mid) {
-  const url = '/api/lyric'
+  const url = '/api/lyric/fcgi-bin/fcg_query_lyric_new.fcg'
 
   const data = Object.assign({}, commonParams, {
     '-': 'MusicJsonCallback_lrc',

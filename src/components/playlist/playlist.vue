@@ -79,14 +79,21 @@
         return ''
       },
       selectItem(item, index) {
-        getSongUrl(item, index, this.setPlaylistUrl)
-        if (this.mode === playMode.random) {
-          index = this.playList.findIndex((song) => {
-            return song.id === item.id
+        getSongUrl(item).then(url => {
+          if (this.mode === playMode.random) {
+            index = this.playList.findIndex((song) => {
+              return song.id === item.id
+            })
+          }
+          this.setCurrentIndex(index)
+          this.setPlayingState(true)
+          this.setPlaylistUrl({
+            url,
+            index
           })
-        }
-        this.setCurrentIndex(index)
-        this.setPlayingState(true)
+        }).catch((err) => {
+          console.log(err)
+        })
       },
       scrollToCurrent(current) {
         const index = this.sequenceList.findIndex((song) => {
@@ -113,9 +120,23 @@
         const nextSIndex = this.currentIndex + 1
         const sSong = this.playList[nextSIndex]
         if (index === this.currentIndex && this.mode !== 2) {
-          getSongUrl(song, nextIndex, this.setPlaylistUrl)
+          getSongUrl(song).then(url => {
+            this.setPlaylistUrl({
+              url,
+              index: nextIndex
+            })
+          }).catch((err) => {
+            console.log(err)
+          })
         } else if (index === sIndex && this.mode === 2) {
-          getSongUrl(sSong, nextSIndex, this.setPlaylistUrl)
+          getSongUrl(sSong).then(url => {
+            this.setPlaylistUrl({
+              url,
+              index: nextSIndex
+            })
+          }).catch((err) => {
+            console.log(err)
+          })
         }
       },
       findIndex (list, song) {

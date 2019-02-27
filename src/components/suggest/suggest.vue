@@ -117,8 +117,15 @@
           this.setSinger(singer)
         } else {
           const index = this.current
-          getSongUrl(item, index, this.setPlaylistUrl)
-          this.insertSong(item)
+          getSongUrl(item).then(url => {
+            this.insertSong(item)
+            this.setPlaylistUrl({
+              url,
+              index
+            })
+          }).catch((err) => {
+            console.log(err)
+          })
         }
         this.$emit('select')
       },

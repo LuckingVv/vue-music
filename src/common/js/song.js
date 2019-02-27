@@ -56,16 +56,17 @@ function filterSinger(singer) {
   return ret.join('/')
 }
 
-export function getSongUrl(item, index, fn) {
-  getSongVkey(item.mid).then(res => { // 获取song的vkey方法
-    if (res.code === ERR_OK) {
-      const vkey = res.req_0.data.midurlinfo[0].vkey
-      const filename = res.req_0.data.midurlinfo[0].filename
-      const url = `http://dl.stream.qqmusic.qq.com/${filename}?guid=1058760837&vkey=${vkey}&uin=0&fromtag=66`
-      fn({
-        url,
-        index
-      })
-    }
+export function getSongUrl(item) {
+  return new Promise((resolve, reject) => {
+    getSongVkey(item.mid).then(res => { // 获取song的vkey方法
+      if (res.req_0.code === ERR_OK) {
+        const vkey = res.req_0.data.midurlinfo[0].vkey
+        const filename = res.req_0.data.midurlinfo[0].filename
+        const url = `http://dl.stream.qqmusic.qq.com/${filename}?guid=1058760837&vkey=${vkey}&uin=0&fromtag=66`
+        resolve(url)
+      } else {
+        reject(new Error('no url'))
+      }
+    })
   })
 }

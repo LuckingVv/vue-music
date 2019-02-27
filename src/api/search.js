@@ -16,7 +16,7 @@ export function getHotKey() {
 }
 
 export function getSearch(w, p, zhida, perpage) {
-  const url = '/api/searchList'
+  const url = '/api/soso/fcgi-bin/search_for_qq_cp'
 
   const data = Object.assign({}, commonParams, {
     '_': Math.random(),
