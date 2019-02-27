@@ -28,7 +28,6 @@ const mutations = {
     state.currentIndex = index
   },
   [types.SET_PLAYLIST_URL](state, {url, index}) {
-    console.log(url)
     let sIndex = findIndex(state.sequenceList, state.playList[state.currentIndex])
     state.sequenceList[sIndex].url = url
     if (state.playList[index]) {
